@@ -40,9 +40,20 @@ h1 {
 
 header {
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
 
+}
+
+.start:hover {
+    background-color: aqua;
+}
+
+.start {
+    width: 5rem;
+    padding: 0;
+    margin: 1rem 0;
 }
 
 .player-container {
@@ -84,3 +95,7 @@ body {
 	}
 }
 
+
+.hide {
+    opacity: 0;
+}
