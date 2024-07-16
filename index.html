@@ -16,7 +16,7 @@
 <body>
     <header>
         <h1>Blackjack</h1>
-        <button class="start">Start</button>
+        <button class="start-button">Start</button>
     </header>
 
 
@@ -26,6 +26,8 @@
         
         <div class="flex-container cards">
 
+            <div class="computer-container hide">
+
                 <div class="card computer">
                     <label class="top"></label>
                     <img class="suit">
@@ -33,10 +35,12 @@
 
                 </div>
 
+            </div>
 
 
 
-            <div class="player-container">
+
+            <div class="player-container hide">
 
                 <div class="card player">
                     <label class="top"></label>
@@ -58,11 +62,13 @@
 
     </div>    
 
-    <div class="balance-container">
+    <div class="balance-container hide">
 
         <div class="balance">Balance: $1000</div>
         <br>
         <input class="bet" placeholder="Place your bet">
+        <label for="bet"></label>
+        <button class="place-bet">Place Bet</button>
 
     </div>
 
