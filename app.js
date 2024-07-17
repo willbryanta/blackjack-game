@@ -7,6 +7,11 @@ const betInfo = document.querySelector('.balance-container')
 const placeBetBtn = document.querySelector('.place-bet')
 const balanceShow = document.querySelector('.balance')
 
+const allCards = document.querySelector('.flex-container')
+
+const computerCard = document.querySelector('.card-computer')
+
+
 // Action buttons
 const hit = document.querySelector('.hit')
 const stay = document.querySelector('.stay')
@@ -14,7 +19,7 @@ const stay = document.querySelector('.stay')
 // All suit types
 const cardSuits = 
 [
-    "hearts", "diamonds", "spades", "clubs"
+    "♥", "diamonds", "spades", "clubs"
 ]
 
 // All card value types
@@ -43,7 +48,6 @@ let init = () => {
     gameStart()
     populateDeck()
     shuffleDeck(deck)
-    console.log(deck)
 
 }
 
@@ -87,7 +91,6 @@ let checkBet = () => {
     } else {
 
         bet.value = 'Invalid Bet'
-
     }
 }
 
@@ -101,10 +104,7 @@ let checkBlackjack = () => {
 let drawCards = () => {
     checkBet()
     checkBlackjack()
-
-
-
-
+    isFlipped()
 
 }
 
@@ -120,6 +120,11 @@ let shuffleDeck = (deck) => {
         deck[i] = temp
     }
 
+}
+
+let isFlipped = () => {
+
+    computerCard.classList.add('is-flipped')
 }
 
 // Calculates the player's total score
@@ -138,8 +143,7 @@ let computerTotal = () => {
 let gameStart = () => {
 
     startBtn.classList.add('hide')
-    playerCards.classList.toggle('hide')
-    computerCards.classList.toggle('hide')
+    allCards.classList.toggle('hide')
     betInfo.classList.toggle('hide')
 }
 

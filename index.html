@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack</title>
 
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon:XROT@-13&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="node_modules/modern-normalize/modern-normalize.css">
     <script defer src="app.js"></script>
@@ -25,15 +24,17 @@
     <div class="main-game">
 
         
-        <div class="flex-container cards">
+        <div class="flex-container hide">
 
-            <div class="computer-container hide">
+            <div class="computer-container">
 
-                <div class="card computer">
-                    <label class="top"></label>
-                    <img class="suit">
-                    <label class="bottom"></label>
-
+                <div class="card card-computer">
+                    <div class="thefront"></div>
+                    <div class="theback">
+                        <div class="firstCard1">1</div>
+                        <div class="firstCard2">2</div>
+                        <div class="firstCard3">3</div>
+                    </div>
                 </div>
 
             </div>
@@ -41,21 +42,27 @@
 
 
 
-            <div class="player-container hide">
+            <div class="player-container">
 
-                <div class="card player">
-                    <label class="top"></label>
-                    <img class="suit">
-                    <label class="bottom"></label>
+                <div class="card card-player">
+                    <div class="thefront"></div>
 
+                    <div class="theback">
+                        <div class="firstCard1">1</div>
+                        <div class="firstCard2">2</div>
+                        <div class="firstCard3">3</div>
+                    </div>
                 </div>
 
+                <div class="card card-player">
+                    <div class="thefront">
+                    </div>
 
-                <div class="card player">
-                    <label class="top"></label>
-                    <img class="suit">
-                    <label class="bottom"></label>
-
+                    <div class="theback">
+                        <div class="firstCard1">1</div>
+                        <div class="firstCard2">2</div>
+                        <div class="firstCard3">3</div>
+                    </div>
                 </div>
             </div>
 
@@ -72,10 +79,9 @@
         <button class="place-bet">Place Bet</button>
         <br>
         <div class="actions-container">
-            <button class="hit hide">Hit</button>
-            <button class="stay hide">Stay</button>
-
-
+            <button class="hit">Hit</button>
+            <button class="stay">Stay</button>
+            
         </div>
 
     </div>
