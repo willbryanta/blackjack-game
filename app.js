@@ -7,6 +7,10 @@ const betInfo = document.querySelector('.balance-container')
 const placeBetBtn = document.querySelector('.place-bet')
 const balanceShow = document.querySelector('.balance')
 
+// Action buttons
+const hit = document.querySelector('.hit')
+const stay = document.querySelector('.stay')
+
 // All suit types
 const cardSuits = 
 [
@@ -23,6 +27,12 @@ let deck = []
 
 // Player balance starts at $1000
 let playerBalance = 1000
+
+// Initialise current bet
+let currentBet;
+
+// Valid or non-valid bet
+let validBet = false;
 
 
 
@@ -57,22 +67,44 @@ let populateDeck = () => {
 }
 
 // Checks whether the betted amount is valid (must be an integer, and balance must remain at atleast $0)
-let balanceCalc = () => {
+let checkBet = () => {
 
-    let currentBet = parseInt(bet.value)
-    playerBalance = playerBalance - currentBet
+    // Convert string input to 
+    currentBet = parseInt(bet.value)
 
-    if(currentBet !== 'integer' && playerBalance >= 0){
+    if(typeof(currentBet) === 'number' && (playerBalance - currentBet) >= 0){
 
+
+        // Will only show actions once a valid bet has been placed
+        hit.classList.toggle('hide')
+        stay.classList.toggle('hide')
+
+        // Re-calculate balance
+        playerBalance = playerBalance - currentBet
         balanceShow.innerText = `Balance: ${playerBalance}`
         bet.value = 'wait for result'
+
+    } else {
+
+        bet.value = 'Invalid Bet'
 
     }
 }
 
+// Checks whether the player won Blackjack, in which case, the payout is instant
+let checkBlackjack = () => {
+
+
+}
+
 
 let drawCards = () => {
-    balanceCalc()
+    checkBet()
+    checkBlackjack()
+
+
+
+
 
 }
 
