@@ -65,13 +65,6 @@ let init = () => {
 
 }
 
-// 
-let render = () => {
-    updateCards()
-    computerTotal()
-    playerTotal()
-}
-
 // Populates the deck array with all card combinations
 let populateDeck = () => {
 
@@ -88,7 +81,7 @@ let populateDeck = () => {
 // Checks whether the betted amount is valid (must be an integer, and balance must remain at atleast $0)
 let checkBet = () => {
 
-    // Convert string input to 
+    // Convert string input to number
     currentBet = parseInt(bet.value)
 
     if(typeof(currentBet) === 'number' && (playerBalance - currentBet) >= 0){
@@ -177,6 +170,11 @@ let shuffleDeck = (deck) => {
 // Calculates the player's total score
 let playerTotal = () => {
 
+    // Reset player rolling total, as code below calculates total of all cards in the player card array
+    rollingTotalP = 0;
+
+    console.log(playerCardValues, rollingTotalP)
+
     for(let val = 0; val < playerCardValues.length; val++){
 
         if(playerCardValues[val][0] === 'J' || playerCardValues[val][0] === 'Q' || playerCardValues[val][0] === 'K'){
@@ -208,7 +206,17 @@ let computerTotal = () => {
 // Calculates new totals and updates player's array
 let hitCard = () => {
     addCardToPlayer()
+    isFlipped()
+    updateCardArrays()
     playerTotal()
+
+}
+
+let stayCard = () => {
+    addCardToComputer()
+    isFlipped()
+    updateCardArrays()
+    computerTotal()
 }
 
 
@@ -217,17 +225,21 @@ let hitCard = () => {
 let gameStart = () => {
 
     startBtn.classList.add('hide')
-    allCards.classList.toggle('hide')
-    betInfo.classList.toggle('hide')
+    allCards.classList.remove('hide')
+    betInfo.classList.remove('hide')
 }
 
 let isFlipped = () => {
 
-    computerCard.classList.toggle('is-flipped')
-    playerCard1.classList.toggle('is-flipped')
-    playerCard2.classList.toggle('is-flipped')
-}
+    for (let card = 0; card < numComputerCards.length; card++){
+        numComputerCards[card].classList.add('is-flipped')
+    } 
 
+    for (let card = 0; card < numPlayerCards.length; card++){
+        numPlayerCards[card].classList.add('is-flipped')
+    }    
+
+}
 
 let updateBalance = (newBalance) => {
     balanceShow.innerText = `Balance: ${newBalance}`
@@ -235,7 +247,7 @@ let updateBalance = (newBalance) => {
 
 let addCardToPlayer = () => {
     let newCard = document.createElement('div')
-    newCard.classList.add('card', 'card-player')
+    newCard.classList.add('card', 'card-player', 'is-flipped')
 
     newCard.innerHTML = `
     <div class="thefront">Front</div>
@@ -246,9 +258,23 @@ let addCardToPlayer = () => {
     </div>`
 
     playerContainer.appendChild(newCard)
+    numPlayerCards = document.querySelectorAll('.card-player')
+}
 
+let addCardToComputer = () => {
+    let newCard = document.createElement('div')
+    newCard.classList.add('card', 'card-player', 'is-flipped')
 
+    newCard.innerHTML = `
+    <div class="thefront">Front</div>
+    <div class="theback">
+        <div class="cardValueP">1</div>
+        <div class="cardValueP">2</div>
+        <div class="cardValueP">3</div>
+    </div>`
 
+    computerCards.appendChild(newCard)
+    numComputerCards = document.querySelectorAll('.card-player')
 }
 
 
@@ -256,3 +282,4 @@ let addCardToPlayer = () => {
 startBtn.addEventListener('click', init)
 placeBetBtn.addEventListener('click', drawCards)
 hit.addEventListener('click', hitCard)
+stay.addEventListener('click', stayCard)
