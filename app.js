@@ -1,6 +1,7 @@
 // DOM elements
 const startBtn = document.querySelector('.start-button')
 const bet = document.querySelector('#bet')
+const playerContainer = document.querySelector('.player-container')
 const playerCards = document.querySelectorAll('.card-player')
 const computerCards = document.querySelector('.computer-container')
 const betInfo = document.querySelector('.balance-container')
@@ -92,10 +93,6 @@ let checkBet = () => {
 
     if(typeof(currentBet) === 'number' && (playerBalance - currentBet) >= 0){
 
-        // Will only show actions once a valid bet has been placed
-        hit.classList.toggle('hide')
-        stay.classList.toggle('hide')
-
         // Re-calculate balance
         playerBalance = playerBalance - currentBet
         balanceShow.innerText = `Balance: ${playerBalance}`
@@ -109,13 +106,15 @@ let checkBet = () => {
 // Checks whether the player won Blackjack, in which case, the payout is instant
 let checkBlackjack = () => {
 
-    rollingTotalP = 21;
-
     if(playerCardValues.length === 2 && rollingTotalP === 21){
         payoutBlackJack()
+        populateDeck()
+        shuffleDeck(deck)
+
     }
 
     // Some logic to reset the game
+
 }
 
 let payoutBlackJack = () => {
@@ -126,13 +125,23 @@ let payoutBlackJack = () => {
 
 
 let drawCards = () => {
+
+    // Checks whether bet is valid
     checkBet()
+
+    // Updates cards in player and computer card array
     updateCardArrays()
-    checkBlackjack()
+
+    // Calculates player's total score
     playerTotal()
+
+    // Calculates computer's total score
     computerTotal()
 
+    // Checks whether player's gotten Blackjack
+    checkBlackjack()
 
+    // Flips one card for the dealer and two cards for the player
     isFlipped()
 }
 
@@ -196,6 +205,12 @@ let computerTotal = () => {
 
 }
 
+// Calculates new totals and updates player's array
+let hitCard = () => {
+    addCardToPlayer()
+    playerTotal()
+}
+
 
 // UI Logic
 // Unhides all elements on the page and hides the start button
@@ -208,18 +223,36 @@ let gameStart = () => {
 
 let isFlipped = () => {
 
-    computerCard.classList.add('is-flipped')
-    playerCard1.classList.add('is-flipped')
-    playerCard2.classList.add('is-flipped')
-
+    computerCard.classList.toggle('is-flipped')
+    playerCard1.classList.toggle('is-flipped')
+    playerCard2.classList.toggle('is-flipped')
 }
+
 
 let updateBalance = (newBalance) => {
     balanceShow.innerText = `Balance: ${newBalance}`
+}
+
+let addCardToPlayer = () => {
+    let newCard = document.createElement('div')
+    newCard.classList.add('card', 'card-player')
+
+    newCard.innerHTML = `
+    <div class="thefront">Front</div>
+    <div class="theback">
+        <div class="cardValueP">1</div>
+        <div class="cardValueP">2</div>
+        <div class="cardValueP">3</div>
+    </div>`
+
+    playerContainer.appendChild(newCard)
+
+
+
 }
 
 
 // Handlers
 startBtn.addEventListener('click', init)
 placeBetBtn.addEventListener('click', drawCards)
-
+hit.addEventListener('click', hitCard)
