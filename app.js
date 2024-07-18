@@ -1,31 +1,31 @@
 // DOM elements
 const startBtn = document.querySelector('.start-button')
 const bet = document.querySelector('#bet')
-const playerCards = document.querySelector('.player-container')
+const playerCards = document.querySelectorAll('.card-player')
 const computerCards = document.querySelector('.computer-container')
 const betInfo = document.querySelector('.balance-container')
 const placeBetBtn = document.querySelector('.place-bet')
 const balanceShow = document.querySelector('.balance')
 
+
 const allCards = document.querySelector('.flex-container')
-
 const computerCard = document.querySelector('.card-computer')
-
+const playerCard1 = document.querySelector('#player-card-1')
+const playerCard2 = document.querySelector('#player-card-2')
 
 // Action buttons
 const hit = document.querySelector('.hit')
 const stay = document.querySelector('.stay')
 
+// Computer card values
+const computerCardValuesBack = document.querySelectorAll('.cardValue')
+const playerCardValuesBack = document.querySelectorAll('.cardValueP')
+
 // All suit types
-const cardSuits = 
-[
-    "♥", "diamonds", "spades", "clubs"
-]
+const cardSuits = [ "♥", "◆", "♠", "♣" ]
 
 // All card value types
-const cardValues = [
-    1,2,3,4,5,6,7,8,9,10, 'J', 'Q', 'K'
-]
+const cardValues = [1,2,3,4,5,6,7,8,9,10, 'J', 'Q', 'K']
 
 // Initialise empty deck
 let deck = []
@@ -36,11 +36,18 @@ let playerBalance = 1000
 // Initialise current bet
 let currentBet;
 
-// Valid or non-valid bet
-let validBet = false;
+// Array holding all cards drawn by either the computer or player
+let computerCardValues = []
+let playerCardValues = []
 
+// Take card iterator
+let cardNum = 0;
 
+// Will change if the player draws cards
+let numPlayerCards = document.querySelectorAll('.card-player')
 
+// Will update based on the number of cards the dealer draws
+let numComputerCards = document.querySelectorAll('.card-computer')
 
 
 // Functions
@@ -53,6 +60,7 @@ let init = () => {
 
 // 
 let render = () => {
+    updateCards()
     computerTotal()
     playerTotal()
 }
@@ -78,7 +86,6 @@ let checkBet = () => {
 
     if(typeof(currentBet) === 'number' && (playerBalance - currentBet) >= 0){
 
-
         // Will only show actions once a valid bet has been placed
         hit.classList.toggle('hide')
         stay.classList.toggle('hide')
@@ -89,7 +96,6 @@ let checkBet = () => {
         bet.value = 'wait for result'
 
     } else {
-
         bet.value = 'Invalid Bet'
     }
 }
@@ -104,7 +110,28 @@ let checkBlackjack = () => {
 let drawCards = () => {
     checkBet()
     checkBlackjack()
+    updateCardArrays()
+
+
+
     isFlipped()
+}
+
+// Update the computer and player cards with each card taken from the deck
+let updateCardArrays = () => {
+
+    for(let card = 0; card < numPlayerCards.length; card++){
+        playerCardValues[card] = deck[card]
+    }
+
+    for(let card = 0; card < numComputerCards.length; card++){
+        computerCardValues[card] = deck[deck.length - card - 1]
+
+    }
+
+    console.log(playerCardValues, computerCardValues)
+
+    
 
 }
 
@@ -125,6 +152,9 @@ let shuffleDeck = (deck) => {
 let isFlipped = () => {
 
     computerCard.classList.add('is-flipped')
+    playerCard1.classList.add('is-flipped')
+    playerCard2.classList.add('is-flipped')
+
 }
 
 // Calculates the player's total score

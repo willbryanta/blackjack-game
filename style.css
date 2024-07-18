@@ -35,7 +35,7 @@ h1 {
 
 .flex-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 header {
@@ -64,9 +64,17 @@ header {
 
 .player-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     position: absolute;
+    left: 20px;
     bottom: 20px;
+
+}
+
+.computer-container {
+    display: flex;
+    position: absolute;
+    left: 15rem;
 
 }
 
@@ -122,23 +130,37 @@ body {
 
 }
 
+.card-player {
+    transform-style: preserve-3d;
+    transition: all 0.5s ease;
+
+}
+
 .thefront {
     backface-visibility: hidden;
 }
 
 .theback {
     display: flex;
+    position: relative;
     backface-visibility:  hidden;
     transform: rotateY(180deg);
     background-color: white;
     height: 100%;
+    width: 100%;
     justify-content: space-around;
     border-radius: 4.5%;
-
-
 }
 
 .is-flipped {
     transform: rotateY(180deg);
+}
+
+.card-values {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    
+
 }
 
