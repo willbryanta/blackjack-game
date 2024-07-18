@@ -43,6 +43,12 @@ let playerCardValues = []
 // Take card iterator
 let cardNum = 0;
 
+// Player rolling total
+let rollingTotalP = 0;
+
+// Computer rolling total
+let rollingTotalC = 0;
+
 // Will change if the player draws cards
 let numPlayerCards = document.querySelectorAll('.card-player')
 
@@ -103,15 +109,28 @@ let checkBet = () => {
 // Checks whether the player won Blackjack, in which case, the payout is instant
 let checkBlackjack = () => {
 
+    rollingTotalP = 21;
 
+    if(playerCardValues.length === 2 && rollingTotalP === 21){
+        payoutBlackJack()
+    }
+
+    // Some logic to reset the game
+}
+
+let payoutBlackJack = () => {
+    playerBalance += parseInt(currentBet) * (1 + 3/2)
+
+    updateBalance(playerBalance)
 }
 
 
 let drawCards = () => {
     checkBet()
-    checkBlackjack()
     updateCardArrays()
-
+    checkBlackjack()
+    playerTotal()
+    computerTotal()
 
 
     isFlipped()
@@ -128,11 +147,6 @@ let updateCardArrays = () => {
         computerCardValues[card] = deck[deck.length - card - 1]
 
     }
-
-    console.log(playerCardValues, computerCardValues)
-
-    
-
 }
 
 // Shuffle deck using the Fisher-Yates algorithm
@@ -149,21 +163,36 @@ let shuffleDeck = (deck) => {
 
 }
 
-let isFlipped = () => {
 
-    computerCard.classList.add('is-flipped')
-    playerCard1.classList.add('is-flipped')
-    playerCard2.classList.add('is-flipped')
-
-}
 
 // Calculates the player's total score
 let playerTotal = () => {
+
+    for(let val = 0; val < playerCardValues.length; val++){
+
+        if(playerCardValues[val][0] === 'J' || playerCardValues[val][0] === 'Q' || playerCardValues[val][0] === 'K'){
+            rollingTotalP += 10;
+        } else {
+            rollingTotalP += parseInt(playerCardValues[val][0])
+        }
+    }
+
+    return rollingTotalP
 
 }
 
 // Calculates the computer's total score
 let computerTotal = () => {
+
+    for(let val = 0; val < computerCardValues.length; val++){
+
+        if(playerCardValues[val][0] === 'J' || playerCardValues[val][0] === 'Q' || playerCardValues[val][0] === 'K'){
+            rollingTotalP += 10;
+        } else {
+            rollingTotalP += parseInt(computerCardValues[val][0])
+        }
+    }
+    return rollingTotalC
 
 }
 
@@ -175,6 +204,18 @@ let gameStart = () => {
     startBtn.classList.add('hide')
     allCards.classList.toggle('hide')
     betInfo.classList.toggle('hide')
+}
+
+let isFlipped = () => {
+
+    computerCard.classList.add('is-flipped')
+    playerCard1.classList.add('is-flipped')
+    playerCard2.classList.add('is-flipped')
+
+}
+
+let updateBalance = (newBalance) => {
+    balanceShow.innerText = `Balance: ${newBalance}`
 }
 
 
