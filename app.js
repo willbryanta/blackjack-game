@@ -18,7 +18,7 @@ const hit = document.querySelector('.hit')
 const stay = document.querySelector('.stay')
 
 // Computer card values
-const computerCardValuesBack = document.querySelectorAll('.cardValue')
+let computerCardValuesBack = document.querySelectorAll('.cardValue')
 let playerCardValuesBack = document.querySelectorAll('.cardValueP')
 
 // All suit types
@@ -125,7 +125,10 @@ let drawCards = () => {
     updateCardArrays()
 
     // Update card UI
-    updateCardUI()
+    updateCardPlayerUI()
+
+    // Update computer card UI
+    updateCardComputerUI()
 
     // Calculates player's total score
     playerTotal()
@@ -149,6 +152,8 @@ let updateCardArrays = () => {
 
     for(let card = 0; card < numComputerCards.length; card++){
         computerCardValues[card] = deck[deck.length - card - 1]
+
+        console.log(computerCardValues)
 
     }
 }
@@ -190,10 +195,10 @@ let computerTotal = () => {
 
     for(let val = 0; val < computerCardValues.length; val++){
 
-        if(playerCardValues[val][0] === 'J' || playerCardValues[val][0] === 'Q' || playerCardValues[val][0] === 'K'){
-            rollingTotalP += 10;
+        if(computerCardValues[val][0] === 'J' || computerCardValues[val][0] === 'Q' || computerCardValues[val][0] === 'K'){
+            rollingTotalC += 10;
         } else {
-            rollingTotalP += parseInt(computerCardValues[val][0])
+            rollingTotalC += parseInt(computerCardValues[val][0])
         }
     }
     return rollingTotalC
@@ -202,19 +207,20 @@ let computerTotal = () => {
 
 // Calculates new totals and updates player's array
 let hitCard = () => {
+    addCardToPlayer()
     updateCardArrays()
     playerTotal()
-    updateCardUI()
-    addCardToPlayer()
+    updateCardPlayerUI()
     isFlipped()
 
 }
 
 let stayCard = () => {
     addCardToComputer()
-    isFlipped()
     updateCardArrays()
     computerTotal()
+    updateCardComputerUI()
+    isFlipped()
 }
 
 
@@ -250,7 +256,7 @@ let addCardToPlayer = () => {
     newCard.innerHTML = `
     <div class="thefront">Front</div>
     <div class="theback">
-        <div class="cardValueP">1</div>
+        <div class="cardValueP"></div>
     </div>`
 
     playerContainer.appendChild(newCard)
@@ -259,19 +265,19 @@ let addCardToPlayer = () => {
 
 let addCardToComputer = () => {
     let newCard = document.createElement('div')
-    newCard.classList.add('card', 'card-player', 'is-flipped')
+    newCard.classList.add('card', 'card-computer', 'is-flipped')
 
     newCard.innerHTML = `
     <div class="thefront">Front</div>
     <div class="theback">
-        <div class="cardValueP">1</div>
+        <div class="cardValue"></div>
     </div>`
 
     computerCards.appendChild(newCard)
-    numComputerCards = document.querySelectorAll('.card-player')
+    numComputerCards = document.querySelectorAll('.card-computer')
 }
 
-let updateCardUI = () => {
+let updateCardPlayerUI = () => {
 
     playerCardValuesBack = document.querySelectorAll('.cardValueP')
 
@@ -280,6 +286,15 @@ let updateCardUI = () => {
 
     }
 
+}
+
+let updateCardComputerUI = () => {
+
+    computerCardValuesBack = document.querySelectorAll('.cardValue')
+
+    for(let val = 0; val < computerCardValuesBack.length; val++){
+        computerCardValuesBack[val].innerText = computerCardValues[val]
+    }
 }
 
 
