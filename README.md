@@ -4,7 +4,7 @@
 
 The aim of the game is to have a hand that totals higher than the dealer's without totalling 22 or higher. Picture cards are all worth **10 points**. An Ace is **11 points**. The points for all other cards is taken at **face value**.
 
-## Playing the game![alt text](image.png)
+## Playing the game![gameplay](image.png)
 
 1. The player can bet any amount up until the value of the balance. Once the bet is placed then the dealer deals the player two cards face up, whilst dealing themselves only one card face up. If a player is dealt an Ace and a 10 or picture card (see _Example 1_) then that player is instantly paid out (Blackjack!).
 
@@ -49,3 +49,16 @@ This version is simplied Blackjack, for the original Blackjack rules please visi
 Modern-normalize npm module from [sindresorhus][modern-normalize]
 
 [modern-normalize]: https://github.com/sindresorhus/modern-normalize
+
+## Technologies used
+
+- Javascript
+- HTML
+- CSS
+
+## Next Steps
+
+- Add split functionality
+- Store player balance in local storage
+- Add additional players
+- Add a theme
