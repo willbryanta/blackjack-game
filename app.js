@@ -12,6 +12,7 @@ const allCards = document.querySelector('.card-container')
 const computerCard = document.querySelector('.card-computer')
 const playerCard1 = document.querySelector('#player-card-1')
 const playerCard2 = document.querySelector('#player-card-2')
+const gameContainer = document.querySelector('.cards-and-bet')
 
 // Action buttons
 const hit = document.querySelector('.hit')
@@ -20,6 +21,9 @@ const stay = document.querySelector('.stay')
 // Computer card values
 let computerCardValuesBack = document.querySelectorAll('.cardValue')
 let playerCardValuesBack = document.querySelectorAll('.cardValueP')
+
+// Elements to delete upon reset
+let elementsToRemove = document.querySelectorAll('toRemove')
 
 // All suit types
 const cardSuits = [ "♥", "◆", "♠", "♣" ]
@@ -34,7 +38,7 @@ let deck = []
 let playerBalance = 1000
 
 // Initialise current bet
-let currentBet;
+let currentBet
 
 // Array holding all cards drawn by either the computer or player
 let computerCardValues = []
@@ -61,7 +65,6 @@ let init = () => {
     gameStart()
     populateDeck()
     shuffleDeck(deck)
-
 }
 
 // Populates the deck array with all card combinations
@@ -205,6 +208,51 @@ let computerTotal = () => {
 
 }
 
+let check21Player = () => {
+    if(rollingTotalP === 21){
+        setTimeout((element) => {
+            elementsToRemove.forEach(() => {
+                element.remove()
+            }, 2000)
+        })
+
+    }
+
+
+    // softReset()
+}
+
+let checkLosePlayer = () => {
+    if(rollingTotalP >= 22){
+
+    }
+}
+
+let check21Computer = () => {
+
+}
+
+let checkLoseComputer = () => {
+
+}
+
+
+
+// Resets everything except balance
+let softReset = () => {
+
+}
+
+// Reset's everything
+let HardReset = () => {
+
+}
+
+let overlay = () => {
+
+
+}
+
 // Calculates new totals and updates player's array
 let hitCard = () => {
     addCardToPlayer()
@@ -212,6 +260,8 @@ let hitCard = () => {
     playerTotal()
     updateCardPlayerUI()
     isFlipped()
+    check21Player()
+    checkLosePlayer()
 
 }
 
@@ -221,6 +271,8 @@ let stayCard = () => {
     computerTotal()
     updateCardComputerUI()
     isFlipped()
+    check21Computer()
+    checkOver21Computer()
 }
 
 
@@ -250,7 +302,7 @@ let updateBalance = (newBalance) => {
 
 let addCardToPlayer = () => {
     let newCard = document.createElement('div')
-    newCard.classList.add('card', 'card-player', 'is-flipped')
+    newCard.classList.add('card', 'card-player', 'is-flipped', 'toRemove')
     newCard.id = numPlayerCards.length + 1
 
     newCard.innerHTML = `
@@ -265,7 +317,7 @@ let addCardToPlayer = () => {
 
 let addCardToComputer = () => {
     let newCard = document.createElement('div')
-    newCard.classList.add('card', 'card-computer', 'is-flipped')
+    newCard.classList.add('card', 'card-computer', 'is-flipped','toRemove')
 
     newCard.innerHTML = `
     <div class="thefront">Front</div>
