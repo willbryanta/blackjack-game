@@ -1,8 +1,8 @@
-# Black-jack game
+# Blackjack game
 
-# How to play BlackJack
+# How to play Blackjack
 
-The aim of the game is to have a hand that totals higher than the dealer's without totalling 22 or higher. Picture cards are all worth **10 points**. An Ace is 11 points**. The points for all other cards is taken at **face value\*\*.
+The aim of the game is to have a hand that totals higher than the dealer's without totalling 22 or higher. Picture cards are all worth **10 points**. An Ace is **11 points**. The points for all other cards is taken at **face value**.
 
 ## Playing the game![alt text](image.png)
 
