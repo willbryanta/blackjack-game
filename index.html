@@ -17,6 +17,18 @@
         <h2 id="message">Message here</h2>
         <button id="new-game-button">New Game</button>
         <button id="deal-hand-button">Deal Hands</button>
+        <div class="instructions">
+            <h3 class="instructions-header">Instructions</h3>
+            <ol class="instructions-text">
+                <li class="step-1">Place a bet at "Bet Amount"</li>
+                <li class="step-2">Submit bet at "Place your bet"</li>
+                <li class="step-3">Hit or Stay</li>
+                <li class="step-4">Click "Deal Hands" for a new hand</li>
+                <li class="step-5">Click "New Game" to reset balance and hand</li>
+            </ol>
+
+        </div>
+
         <div id="computer">
             <h3 id="computer-hand-display"></h3>
             <div id="computer-hand">
@@ -26,7 +38,7 @@
             <div id="balance-display"></div>
             <form id="balance-form">
                 <input type="number" placeholder="Bet amount" min="1" required id="balance-amount">
-                <button>Place your bet</button>
+                <button id="place-bet">Place your bet</button>
             </form>
             <button id="hit-button">Hit</button>
             <button id="stay-button">Stay</button>
@@ -36,7 +48,6 @@
             <div id="player-hand">
             </div>
         </div>
-        
     </div>
 
 </body>

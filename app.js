@@ -204,7 +204,7 @@ function renderHands() {
 function createCardImage(card) {
   const cardImage = document.createElement("img");
 
-  cardImage.alt = `${card.face}${card.suit} face is added`;
+  cardImage.alt = `${card.face}${card.suit} card`;
   cardImage.className = "card-image";
   cardImage.src = `cards/${card.suit}_${card.face}.png`;
 
@@ -214,7 +214,7 @@ function createCardImage(card) {
 function createCardBackImage() {
   const cardImage = document.createElement("img");
 
-  cardImage.alt = `Black face is added`;
+  cardImage.alt = `Back of the card`;
   cardImage.className = "card-image";
   cardImage.src = "cards/back_dark.png";
 
@@ -249,7 +249,7 @@ function startGame() {
 function checkPlayerWin() {
   if (player.handValue === 21) {
     if (player.hand.length === 2) {
-      message = "You got BlackJack!";
+      message = "You got Blackjack!";
       player.balance += player.betAmount * 1.5;
     } else {
       message = "You Win!";
@@ -260,13 +260,25 @@ function checkPlayerWin() {
 }
 
 function checkComputerWin() {
-  if (computer.handValue > player.handValue && computer.handValue < 22) {
-    message = "You lose!";
-    winner = computer;
-  } else if (computer.handValue === player.handValue) {
-    message = "It's a tie!";
-    player.balance += player.betAmount;
-    return;
+  if (computer.handValue === 21) {
+    if (computer.hand.length === 2) {
+      message = "Computer got Blackjack!";
+      winner = computer;
+    }
+    if (
+      computer.handValue > player.handValue &&
+      computer.handValue < 22 &&
+      computer.hand.length > 2
+    ) {
+      message = "You lose!";
+      winner = computer;
+    } else if (
+      computer.handValue === player.handValue &&
+      computer.hand.length > 2
+    ) {
+      message = "It's a tie!";
+      player.balance += player.betAmount;
+    }
   }
 }
 
@@ -280,6 +292,8 @@ function checkBalanceZero() {
     sufficientFunds = false;
   }
 }
+
+//-------------Code GraveYard--------------------------------
 
 // // DOM elements
 // const startBtn = document.querySelector('.start-button')
