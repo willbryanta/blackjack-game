@@ -43,3 +43,9 @@ The player has three outcomes:
 This version is simplied Blackjack, for the original Blackjack rules please visit [Blackjack rules][Blackjack].
 
 [Blackjack]: https://www.hippodromecasino.com/hippodrome-casino/blackjack/#:~:text=The%20object%20is%20to%20have,are%20counted%20at%20face%20value.
+
+## Attributions
+
+Modern-normalize npm module from [sindresorhus][modern-normalize]
+
+[modern-normalize]: https://github.com/sindresorhus/modern-normalize
