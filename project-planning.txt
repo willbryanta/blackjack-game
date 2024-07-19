@@ -1,0 +1,33 @@
+Project Planning:
+
+// Declare constants i.e. suits and card values
+
+// Declare variables i.e. deck, player, computer, winner, message, sufficientFunds, hasGameStarted
+
+// DOM elements
+// Need to access computer and player hands
+// Need to access all buttons and submit form
+// Need to access all displays
+
+// Initialise game
+// Create deck from suits and card value objects
+// Shuffle deck using the Fisher-Yates algorithm
+
+// Add event listeners to handle when any of the buttons are clicked
+// Add an event listener for when the form is submitted
+
+// Create functions to handle each event listener
+// handleSubmit function => starts the game
+// handleHit function => adds a card to the player's hand when the user clicks hit button
+// handleStay function => starts the computer's turn once the player clicks stay
+// handleDeal function => deals computer one card and the player two new cards
+
+// Create functions
+// init() => initialise all variables i.e. deck, player and computer hands, balance, betAmount and game state variables
+// createDeck() => populates a deck array with card objects that have a suit, face and value
+// shuffleDeck() => shuffles deck
+// render() => updates player and computer hands, updates player's balance, and updates the message rendered or outcome when the player wins or loses
+// renderHands() => checks whether games started and renders both the player and computer's hands, then adds cards from the deck array to each of the player and computer's hands
+// createImage() => function to create both a front and back image for each card
+// checkPlayerWin(), checkComputerWin() => check whether the player or computer wins as the win conditions are not the same
+
