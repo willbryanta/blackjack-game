@@ -51,7 +51,6 @@ dealHandButton.addEventListener("click", handleDeal);
 stayButton.addEventListener("click", handleStay);
 
 // --------- Event Listeners ---------
-
 function handleSubmitBet(event) {
   event.preventDefault();
 
@@ -205,6 +204,7 @@ function renderHands() {
 function createCardImage(card) {
   const cardImage = document.createElement("img");
 
+  cardImage.alt = `${card.face}${card.suit} face is added`;
   cardImage.className = "card-image";
   cardImage.src = `cards/${card.suit}_${card.face}.png`;
 
@@ -214,6 +214,7 @@ function createCardImage(card) {
 function createCardBackImage() {
   const cardImage = document.createElement("img");
 
+  cardImage.alt = `Black face is added`;
   cardImage.className = "card-image";
   cardImage.src = "cards/back_dark.png";
 
