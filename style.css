@@ -14,7 +14,9 @@ body{
     flex-direction: column;
     height: 100vh;
     margin: 0;
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 h1 {
@@ -22,13 +24,6 @@ h1 {
     font-size: 3rem;
 }
 
-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-
-}
 
 .card {
     background-color: rgb(12, 145, 228);

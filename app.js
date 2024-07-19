@@ -1,357 +1,630 @@
-// DOM elements
-const startBtn = document.querySelector('.start-button')
-const bet = document.querySelector('#bet')
-const playerContainer = document.querySelector('.player-container')
-const playerCards = document.querySelectorAll('.card-player')
-const computerCards = document.querySelector('.computer-container')
-const betInfo = document.querySelector('.balance-container')
-const placeBetBtn = document.querySelector('.place-bet')
-const balanceShow = document.querySelector('.balance')
+// --------- Constants ---------
 
-const allCards = document.querySelector('.card-container')
-const computerCard = document.querySelector('.card-computer')
-const playerCard1 = document.querySelector('#player-card-1')
-const playerCard2 = document.querySelector('#player-card-2')
-const gameContainer = document.querySelector('.cards-and-bet')
+const SUITS = ["clubs", "diamonds", "hearts", "spades"];
+const CARD_VALUES = [
+  { face: 2, value: 2 },
+  { face: 3, value: 3 },
+  { face: 4, value: 4 },
+  { face: 5, value: 5 },
+  { face: 6, value: 6 },
+  { face: 7, value: 7 },
+  { face: 8, value: 8 },
+  { face: 9, value: 9 },
+  { face: 10, value: 10 },
+  { face: "J", value: 10 },
+  { face: "Q", value: 10 },
+  { face: "K", value: 10 },
+  { face: "A", value: 11 },
+];
 
-// Action buttons
-const hit = document.querySelector('.hit')
-const stay = document.querySelector('.stay')
+// --------- Variables ---------
 
-// Computer card values
-let computerCardValuesBack = document.querySelectorAll('.cardValue')
-let playerCardValuesBack = document.querySelectorAll('.cardValueP')
+let deck;
+let player;
+let computer;
+let hasGameStarted;
+let winner;
+let message;
 
-// Elements to delete upon reset
-let elementsToRemove = document.querySelectorAll('toRemove')
+// --------- DOM elements ---------
+const computerHandElement = document.querySelector("#computer-hand");
+const playerHandElement = document.querySelector("#player-hand");
+const newGameButton = document.querySelector("#new-game-button");
+const dealHandButton = document.querySelector("#deal-hand-button");
+const stayButton = document.querySelector("#stay-button");
+const hitButton = document.querySelector("#hit-button");
+const balanceDisplay = document.querySelector("#balance-display");
+const balanceForm = document.querySelector("#balance-form");
+const balanceAmountInput = document.querySelector("#balance-amount");
+const messageElement = document.querySelector("#message");
+const playerHandDisplay = document.querySelector("#player-hand-display");
+const computerHandDisplay = document.querySelector("#computer-hand-display");
 
-// All suit types
-const cardSuits = [ "♥", "◆", "♠", "♣" ]
+// --------- Start Game ---------
+init();
 
-// All card value types
-const cardValues = [1,2,3,4,5,6,7,8,9,10, 'J', 'Q', 'K']
+// --------- Add Event Listeners ---------
+newGameButton.addEventListener("click", init);
+balanceForm.addEventListener("submit", handleSubmitBet);
+hitButton.addEventListener("click", handleHit);
+dealHandButton.addEventListener("click", handleDeal);
+stayButton.addEventListener("click", handleStay);
 
-// Initialise empty deck
-let deck = []
+// --------- Event Listeners ---------
 
-// Player balance starts at $1000
-let playerBalance = 1000
+function handleSubmitBet(event) {
+  event.preventDefault();
+  if (winner) {
+    return;
+  }
 
-// Initialise current bet
-let currentBet
+  startGame();
+  updateBalance();
+  checkPlayerWin();
 
-// Array holding all cards drawn by either the computer or player
-let computerCardValues = []
-let playerCardValues = []
-
-// Take card iterator
-let cardNum = 0;
-
-// Player rolling total
-let rollingTotalP = 0;
-
-// Computer rolling total
-let rollingTotalC = 0;
-
-// Will change if the player draws cards
-let numPlayerCards = document.querySelectorAll('.card-player')
-
-// Will update based on the number of cards the dealer draws
-let numComputerCards = document.querySelectorAll('.card-computer')
-
-
-// Functions
-let init = () => {
-    gameStart()
-    populateDeck()
-    shuffleDeck(deck)
+  render();
 }
 
-// Populates the deck array with all card combinations
-let populateDeck = () => {
+function handleHit() {
+  if (winner) {
+    return;
+  }
 
-    // Combines values and suits into a 1D array with the use of flatMap()
-    deck = cardValues.flatMap((value) => {
+  player.hand.push(deck.pop());
+  const playerHandValue = calculateHandValue(player.hand);
 
-       return cardSuits.map((suit) => {
-            return `${value} ${suit}`
+  checkPlayerWin();
 
-        })
-    })
+  if (playerHandValue > 22) {
+    message = "You Lose!";
+    winner = computer;
+  }
+
+  render();
 }
 
-// Checks whether the betted amount is valid (must be an integer, and balance must remain at atleast $0)
-let checkBet = () => {
+function handleStay() {
+  if (winner) {
+    return;
+  }
 
-    // Convert string input to number
-    currentBet = parseInt(bet.value)
+  const computerHandValue = calculateHandValue(computer.hand);
 
-    if(typeof(currentBet) === 'number' && (playerBalance - currentBet) >= 0){
+  while (computerHandValue < 17) {
+    computer.hand.push(deck.pop());
+  }
 
-        // Re-calculate balance
-        playerBalance = playerBalance - currentBet
-        balanceShow.innerText = `Balance: ${playerBalance}`
-        bet.value = 'wait for result'
+  if (computerHandValue > 22) {
+    message = "You Win!";
+    winner = player;
+  }
+}
 
+function handleDeal() {
+  // deck = createDeck()
+  // hasGameStarted = false;
+  // player.hand = [];
+  // computer.hand = [];
+  // message = "";
+
+  const balance = player.balance;
+  init();
+  player.balance = balance;
+}
+
+// --------- Functions ---------
+function init() {
+  deck = createDeck();
+
+  player = {
+    hand: [],
+    balance: 1000,
+    betAmount: 0,
+  };
+
+  computer = {
+    hand: [],
+  };
+
+  hasGameStarted = false;
+  winner = null;
+  message = "";
+
+  render();
+}
+
+function createDeck() {
+  let deck = [];
+
+  SUITS.forEach((suit) => {
+    CARD_VALUES.forEach((value) => {
+      deck.push({
+        suit: suit,
+        face: value.face,
+        value: value.value,
+      });
+    });
+  });
+
+  return shuffleDeck(deck);
+}
+
+function shuffleDeck(deck) {
+  let i = deck.length,
+    j,
+    temp;
+
+  while (--i > 0) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = deck[j];
+    deck[j] = deck[i];
+    deck[i] = temp;
+  }
+
+  return deck;
+}
+
+function render() {
+  renderHands();
+  renderBalance();
+  renderMessage();
+}
+
+function renderHands() {
+  if (hasGameStarted === false) {
+    playerHandElement.innerHTML = "";
+    playerHandElement.append(createCardBackImage(), createCardBackImage());
+    playerHandDisplay.textContent = `Player Hand: 0`;
+
+    computerHandElement.innerHTML = "";
+    computerHandElement.append(createCardBackImage());
+    computerHandDisplay.textContent = `Computer Hand: 0`;
+
+    return;
+  }
+
+  const playerHandValue = calculateHandValue(player.hand);
+  playerHandDisplay.textContent = `Player Hand: ${playerHandValue}`;
+  playerHandElement.innerHTML = "";
+  player.hand.forEach((card) => {
+    const cardImage = createCardImage(card);
+    playerHandElement.appendChild(cardImage);
+  });
+
+  const computerHandValue = calculateHandValue(computer.hand);
+  computerHandDisplay.textContent = `Computer Hand: ${computerHandValue}`;
+  computerHandElement.innerHTML = "";
+  computer.hand.forEach((card) => {
+    const cardImage = createCardImage(card);
+    computerHandElement.appendChild(cardImage);
+  });
+}
+
+function createCardImage(card) {
+  const cardImage = document.createElement("img");
+
+  cardImage.className = "card-image";
+  cardImage.src = `cards/${card.suit}_${card.face}.png`;
+
+  return cardImage;
+}
+
+function createCardBackImage() {
+  const cardImage = document.createElement("img");
+
+  cardImage.className = "card-image";
+  cardImage.src = "cards/back_dark.png";
+
+  return cardImage;
+}
+
+function renderBalance() {
+  balanceDisplay.textContent = `Balance: ${player.balance}`;
+}
+
+function updateBalance() {
+  player.betAmount = parseInt(balanceAmountInput.value);
+
+  if (player.betAmount > player.balance) {
+    balanceAmountInput.value = "";
+    balanceAmountInput.placeholder = "Insufficient Funds";
+    player.betAmount = 0;
+    return;
+  }
+
+  player.balance = player.balance - player.betAmount;
+}
+
+function startGame() {
+  if (hasGameStarted) return;
+
+  player.hand = [deck.pop(), deck.pop()];
+  computer.hand = [deck.pop()];
+  hasGameStarted = true;
+}
+
+function checkPlayerWin() {
+  const playerHandValue = calculateHandValue(player.hand);
+
+  if (playerHandValue === 21) {
+    if (player.hand.length === 2) {
+      message = "You got BlackJack!";
+      player.balance += player.betAmount * 1.5;
     } else {
-        bet.value = 'Invalid Bet'
+      message = "You Win!";
+      player.balance += player.betAmount * 2;
     }
+    winner = player;
+  }
 }
 
-// Checks whether the player won Blackjack, in which case, the payout is instant
-let checkBlackjack = () => {
+function checkComputerWin() {
+  const computerHandValue = calculateHandValue(computer.hand);
+  const playerHandValue = calculateHandValue(player.hand);
 
-    if(playerCardValues.length === 2 && rollingTotalP === 21){
-        payoutBlackJack()
-        populateDeck()
-        shuffleDeck(deck)
-
-    }
-
-    // Some logic to reset the game
-
+  if (computerHandValue > playerHandValue && computerHandValue < 22) {
+    message = "You lose!";
+  } else if (computerHandValue === playerHandValue) {
+    message = "It's a tie!";
+    player.balance += player.betAmount;
+    return;
+  }
+  winner = computer;
 }
 
-let payoutBlackJack = () => {
-    playerBalance += parseInt(currentBet) * (1 + 3/2)
-
-    updateBalance(playerBalance)
+function calculateHandValue(hand) {
+  return hand.reduce((total, card) => total + card.value, 0);
 }
 
-
-let drawCards = () => {
-
-    // Checks whether bet is valid
-    checkBet()
-
-    // Updates cards in player and computer card array
-    updateCardArrays()
-
-    // Update card UI
-    updateCardPlayerUI()
-
-    // Update computer card UI
-    updateCardComputerUI()
-
-    // Calculates player's total score
-    playerTotal()
-
-    // Calculates computer's total score
-    computerTotal()
-
-    // Checks whether player's gotten Blackjack
-    checkBlackjack()
-
-    // Flips one card for the dealer and two cards for the player
-    isFlipped()
+function renderMessage() {
+  messageElement.textContent = message;
 }
 
-// Update the computer and player cards with each card taken from the deck
-let updateCardArrays = () => {
+// // DOM elements
+// const startBtn = document.querySelector('.start-button')
+// const bet = document.querySelector('#bet')
+// const playerContainer = document.querySelector('.player-container')
+// const playerCards = document.querySelectorAll('.card-player')
+// const computerCards = document.querySelector('.computer-container')
+// const betInfo = document.querySelector('.balance-container')
+// const placeBetBtn = document.querySelector('.place-bet')
+// const balanceShow = document.querySelector('.balance')
 
-    for(let card = 0; card < numPlayerCards.length; card++){
-        playerCardValues[card] = deck[card]
-    }
+// const allCards = document.querySelector('.card-container')
+// const computerCard = document.querySelector('.card-computer')
+// const playerCard1 = document.querySelector('#player-card-1')
+// const playerCard2 = document.querySelector('#player-card-2')
+// const gameContainer = document.querySelector('.cards-and-bet')
 
-    for(let card = 0; card < numComputerCards.length; card++){
-        computerCardValues[card] = deck[deck.length - card - 1]
+// // Action buttons
+// const hit = document.querySelector('.hit')
+// const stay = document.querySelector('.stay')
 
-        console.log(computerCardValues)
+// // Computer card values
+// let computerCardValuesBack = document.querySelectorAll('.cardValue')
+// let playerCardValuesBack = document.querySelectorAll('.cardValueP')
 
-    }
-}
+// // Elements to delete upon reset
+// let elementsToRemove = document.querySelectorAll('toRemove')
 
-// Shuffle deck using the Fisher-Yates algorithm
-let shuffleDeck = (deck) => {
+// // All suit types
+// const cardSuits = [ "♥", "◆", "♠", "♣" ]
 
-    let i = deck.length, j, temp;
+// // All card value types
+// const cardValues = [1,2,3,4,5,6,7,8,9,10, 'J', 'Q', 'K']
 
-    while(--i > 0){
-        j = Math.floor(Math.random()*(i+1))
-        temp = deck[j]
-        deck[j] = deck[i]
-        deck[i] = temp
-    }
+// // Initialise empty deck
+// let deck = []
 
-}
+// // Player balance starts at $1000
+// let playerBalance = 1000
 
-// Calculates the player's total score
-let playerTotal = () => {
+// // Initialise current bet
+// let currentBet
 
-    // Reset player rolling total, as code below calculates total of all cards in the player card array
-    rollingTotalP = 0;
+// // Array holding all cards drawn by either the computer or player
+// let computerCardValues = []
+// let playerCardValues = []
 
-    for(let val = 0; val < playerCardValues.length; val++){
+// // Take card iterator
+// let cardNum = 0;
 
-        if(playerCardValues[val][0] === 'J' || playerCardValues[val][0] === 'Q' || playerCardValues[val][0] === 'K'){
-            rollingTotalP += 10;
-        } else {
-            rollingTotalP += parseInt(playerCardValues[val][0])
-        }
-    }
+// // Player rolling total
+// let rollingTotalP = 0;
 
-    return rollingTotalP
-}
+// // Computer rolling total
+// let rollingTotalC = 0;
 
-// Calculates the computer's total score
-let computerTotal = () => {
+// // Will change if the player draws cards
+// let numPlayerCards = document.querySelectorAll('.card-player')
 
-    for(let val = 0; val < computerCardValues.length; val++){
+// // Will update based on the number of cards the dealer draws
+// let numComputerCards = document.querySelectorAll('.card-computer')
 
-        if(computerCardValues[val][0] === 'J' || computerCardValues[val][0] === 'Q' || computerCardValues[val][0] === 'K'){
-            rollingTotalC += 10;
-        } else {
-            rollingTotalC += parseInt(computerCardValues[val][0])
-        }
-    }
-    return rollingTotalC
+// // Functions
+// let init = () => {
+//     gameStart()
+//     populateDeck()
+//     shuffleDeck(deck)
+// }
 
-}
+// // Populates the deck array with all card combinations
+// let populateDeck = () => {
 
-let check21Player = () => {
-    if(rollingTotalP === 21){
-        setTimeout((element) => {
-            elementsToRemove.forEach(() => {
-                element.remove()
-            }, 2000)
-        })
+//     // Combines values and suits into a 1D array with the use of flatMap()
+//     deck = cardValues.flatMap((value) => {
 
-    }
+//        return cardSuits.map((suit) => {
+//             return `${value} ${suit}`
 
+//         })
+//     })
+// }
 
-    // softReset()
-}
+// // Checks whether the betted amount is valid (must be an integer, and balance must remain at atleast $0)
+// let checkBet = () => {
 
-let checkLosePlayer = () => {
-    if(rollingTotalP >= 22){
+//     // Convert string input to number
+//     currentBet = parseInt(bet.value)
 
-    }
-}
+//     if(typeof(currentBet) === 'number' && (playerBalance - currentBet) >= 0){
 
-let check21Computer = () => {
+//         // Re-calculate balance
+//         playerBalance = playerBalance - currentBet
+//         balanceShow.innerText = `Balance: ${playerBalance}`
+//         bet.value = 'wait for result'
 
-}
+//     } else {
+//         bet.value = 'Invalid Bet'
+//     }
+// }
 
-let checkLoseComputer = () => {
+// // Checks whether the player won Blackjack, in which case, the payout is instant
+// let checkBlackjack = () => {
 
-}
+//     if(playerCardValues.length === 2 && rollingTotalP === 21){
+//         payoutBlackJack()
+//         populateDeck()
+//         shuffleDeck(deck)
 
+//     }
 
+//     // Some logic to reset the game
 
-// Resets everything except balance
-let softReset = () => {
+// }
 
-}
+// let payoutBlackJack = () => {
+//     playerBalance += parseInt(currentBet) * (1 + 3/2)
 
-// Reset's everything
-let HardReset = () => {
+//     updateBalance(playerBalance)
+// }
 
-}
+// let drawCards = () => {
 
-let overlay = () => {
+//     // Checks whether bet is valid
+//     checkBet()
 
+//     // Updates cards in player and computer card array
+//     updateCardArrays()
 
-}
+//     // Update card UI
+//     updateCardPlayerUI()
 
-// Calculates new totals and updates player's array
-let hitCard = () => {
-    addCardToPlayer()
-    updateCardArrays()
-    playerTotal()
-    updateCardPlayerUI()
-    isFlipped()
-    check21Player()
-    checkLosePlayer()
+//     // Update computer card UI
+//     updateCardComputerUI()
 
-}
+//     // Calculates player's total score
+//     playerTotal()
 
-let stayCard = () => {
-    addCardToComputer()
-    updateCardArrays()
-    computerTotal()
-    updateCardComputerUI()
-    isFlipped()
-    check21Computer()
-    checkOver21Computer()
-}
+//     // Calculates computer's total score
+//     computerTotal()
 
+//     // Checks whether player's gotten Blackjack
+//     checkBlackjack()
 
-// UI Logic
-// Unhides all elements on the page and hides the start button
-let gameStart = () => {
+//     // Flips one card for the dealer and two cards for the player
+//     isFlipped()
+// }
 
-    startBtn.classList.add('hide')
-    allCards.classList.remove('hide')
-    betInfo.classList.remove('hide')
-}
+// // Update the computer and player cards with each card taken from the deck
+// let updateCardArrays = () => {
 
-let isFlipped = () => {
+//     for(let card = 0; card < numPlayerCards.length; card++){
+//         playerCardValues[card] = deck[card]
+//     }
 
-    for (let card = 0; card < numComputerCards.length; card++){
-        numComputerCards[card].classList.add('is-flipped')
-    } 
+//     for(let card = 0; card < numComputerCards.length; card++){
+//         computerCardValues[card] = deck[deck.length - card - 1]
 
-    for (let card = 0; card < numPlayerCards.length; card++){
-        numPlayerCards[card].classList.add('is-flipped')
-    }    
-}
+//         console.log(computerCardValues)
 
-let updateBalance = (newBalance) => {
-    balanceShow.innerText = `Balance: ${newBalance}`
-}
+//     }
+// }
 
-let addCardToPlayer = () => {
-    let newCard = document.createElement('div')
-    newCard.classList.add('card', 'card-player', 'is-flipped', 'toRemove')
-    newCard.id = numPlayerCards.length + 1
+// // Shuffle deck using the Fisher-Yates algorithm
+// let shuffleDeck = (deck) => {
 
-    newCard.innerHTML = `
-    <div class="thefront">Front</div>
-    <div class="theback">
-        <div class="cardValueP"></div>
-    </div>`
+//     let i = deck.length, j, temp;
 
-    playerContainer.appendChild(newCard)
-    numPlayerCards = document.querySelectorAll('.card-player')
-}
+//     while(--i > 0){
+//         j = Math.floor(Math.random()*(i+1))
+//         temp = deck[j]
+//         deck[j] = deck[i]
+//         deck[i] = temp
+//     }
 
-let addCardToComputer = () => {
-    let newCard = document.createElement('div')
-    newCard.classList.add('card', 'card-computer', 'is-flipped','toRemove')
+// }
 
-    newCard.innerHTML = `
-    <div class="thefront">Front</div>
-    <div class="theback">
-        <div class="cardValue"></div>
-    </div>`
+// // Calculates the player's total score
+// let playerTotal = () => {
 
-    computerCards.appendChild(newCard)
-    numComputerCards = document.querySelectorAll('.card-computer')
-}
+//     // Reset player rolling total, as code below calculates total of all cards in the player card array
+//     rollingTotalP = 0;
 
-let updateCardPlayerUI = () => {
+//     for(let val = 0; val < playerCardValues.length; val++){
 
-    playerCardValuesBack = document.querySelectorAll('.cardValueP')
+//         if(playerCardValues[val][0] === 'J' || playerCardValues[val][0] === 'Q' || playerCardValues[val][0] === 'K'){
+//             rollingTotalP += 10;
+//         } else {
+//             rollingTotalP += parseInt(playerCardValues[val][0])
+//         }
+//     }
 
-    for(let val = 0; val < playerCardValuesBack.length; val++){
-        playerCardValuesBack[val].innerText = playerCardValues[val]
+//     return rollingTotalP
+// }
 
-    }
+// // Calculates the computer's total score
+// let computerTotal = () => {
 
-}
+//     for(let val = 0; val < computerCardValues.length; val++){
 
-let updateCardComputerUI = () => {
+//         if(computerCardValues[val][0] === 'J' || computerCardValues[val][0] === 'Q' || computerCardValues[val][0] === 'K'){
+//             rollingTotalC += 10;
+//         } else {
+//             rollingTotalC += parseInt(computerCardValues[val][0])
+//         }
+//     }
+//     return rollingTotalC
 
-    computerCardValuesBack = document.querySelectorAll('.cardValue')
+// }
 
-    for(let val = 0; val < computerCardValuesBack.length; val++){
-        computerCardValuesBack[val].innerText = computerCardValues[val]
-    }
-}
+// let check21Player = () => {
+//     if(rollingTotalP === 21){
+//         setTimeout((element) => {
+//             elementsToRemove.forEach(() => {
+//                 element.remove()
+//             }, 2000)
+//         })
 
+//     }
 
-// Handlers
-startBtn.addEventListener('click', init)
-placeBetBtn.addEventListener('click', drawCards)
-hit.addEventListener('click', hitCard)
-stay.addEventListener('click', stayCard)
+//     // softReset()
+// }
+
+// let checkLosePlayer = () => {
+//     if(rollingTotalP >= 22){
+
+//     }
+// }
+
+// let check21Computer = () => {
+
+// }
+
+// let checkLoseComputer = () => {
+
+// }
+
+// // Resets everything except balance
+// let softReset = () => {
+
+// }
+
+// // Reset's everything
+// let HardReset = () => {
+
+// }
+
+// let overlay = () => {
+
+// }
+
+// // Calculates new totals and updates player's array
+// let hitCard = () => {
+//     addCardToPlayer()
+//     updateCardArrays()
+//     playerTotal()
+//     updateCardPlayerUI()
+//     isFlipped()
+//     check21Player()
+//     checkLosePlayer()
+
+// }
+
+// let stayCard = () => {
+//     addCardToComputer()
+//     updateCardArrays()
+//     computerTotal()
+//     updateCardComputerUI()
+//     isFlipped()
+//     check21Computer()
+//     checkOver21Computer()
+// }
+
+// // UI Logic
+// // Unhides all elements on the page and hides the start button
+// let gameStart = () => {
+
+//     startBtn.classList.add('hide')
+//     allCards.classList.remove('hide')
+//     betInfo.classList.remove('hide')
+// }
+
+// let isFlipped = () => {
+
+//     for (let card = 0; card < numComputerCards.length; card++){
+//         numComputerCards[card].classList.add('is-flipped')
+//     }
+
+//     for (let card = 0; card < numPlayerCards.length; card++){
+//         numPlayerCards[card].classList.add('is-flipped')
+//     }
+// }
+
+// let updateBalance = (newBalance) => {
+//     balanceShow.innerText = `Balance: ${newBalance}`
+// }
+
+// let addCardToPlayer = () => {
+//     let newCard = document.createElement('div')
+//     newCard.classList.add('card', 'card-player', 'is-flipped', 'toRemove')
+//     newCard.id = numPlayerCards.length + 1
+
+//     newCard.innerHTML = `
+//     <div class="thefront">Front</div>
+//     <div class="theback">
+//         <div class="cardValueP"></div>
+//     </div>`
+
+//     playerContainer.appendChild(newCard)
+//     numPlayerCards = document.querySelectorAll('.card-player')
+// }
+
+// let addCardToComputer = () => {
+//     let newCard = document.createElement('div')
+//     newCard.classList.add('card', 'card-computer', 'is-flipped','toRemove')
+
+//     newCard.innerHTML = `
+//     <div class="thefront">Front</div>
+//     <div class="theback">
+//         <div class="cardValue"></div>
+//     </div>`
+
+//     computerCards.appendChild(newCard)
+//     numComputerCards = document.querySelectorAll('.card-computer')
+// }
+
+// let updateCardPlayerUI = () => {
+
+//     playerCardValuesBack = document.querySelectorAll('.cardValueP')
+
+//     for(let val = 0; val < playerCardValuesBack.length; val++){
+//         playerCardValuesBack[val].innerText = playerCardValues[val]
+
+//     }
+// }
+
+// let updateCardComputerUI = () => {
+
+//     computerCardValuesBack = document.querySelectorAll('.cardValue')
+
+//     for(let val = 0; val < computerCardValuesBack.length; val++){
+//         computerCardValuesBack[val].innerText = computerCardValues[val]
+//     }
+// }
+
+// // Handlers
+// startBtn.addEventListener('click', init)
+// placeBetBtn.addEventListener('click', drawCards)
+// hit.addEventListener('click', hitCard)
+// stay.addEventListener('click', stayCard)

@@ -14,14 +14,30 @@
 </head>
 
 <body>
-    <header>
         <h1>Blackjack</h1>
-        <button class="start-button">Start</button>
-    </header>
-
-
-    <div class="cards-and-bet">
-        <div class="card-container hide">
+        <h2 id="message">Message here</h2>
+        <button id="new-game-button">New Game</button>
+        <button id="deal-hand-button">Deal Hands</button>
+        <div id="computer">
+            <h3 id="computer-hand-display"></h3>
+            <div id="computer-hand">
+            </div>
+        </div>
+        <div id="game-controls">
+            <div id="balance-display"></div>
+            <form id="balance-form">
+                <input type="number" placeholder="Bet amount" min="1" required id="balance-amount">
+                <button>Place your bet</button>
+            </form>
+            <button id="hit-button">Hit</button>
+            <button id="stay-button">Stay</button>
+        </div>
+        <div id="player">
+            <h3 id="player-hand-display"></h3>
+            <div id="player-hand">
+            </div>
+        </div>
+        <!-- <div class="card-container hide">
             <div class="computer-container">
 
                 <div class="card card-computer">
@@ -67,7 +83,7 @@
 
             </div>
 
-        </div>
+        </div> -->
     </div>
 
 </body>
