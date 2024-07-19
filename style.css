@@ -24,6 +24,10 @@ h1 {
     font-size: 3rem;
 }
 
+img {
+    height: 15rem;
+}
+
 
 .card {
     background-color: rgb(12, 145, 228);

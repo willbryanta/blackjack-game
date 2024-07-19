@@ -18,13 +18,13 @@ const CARD_VALUES = [
 ];
 
 // --------- Variables ---------
-
 let deck;
 let player;
 let computer;
 let hasGameStarted;
 let winner;
 let message;
+let sufficientFunds;
 
 // --------- DOM elements ---------
 const computerHandElement = document.querySelector("#computer-hand");
@@ -54,14 +54,17 @@ stayButton.addEventListener("click", handleStay);
 
 function handleSubmitBet(event) {
   event.preventDefault();
-  if (winner) {
+
+  checkBalanceZero();
+  renderMessage();
+
+  if (winner || !sufficientFunds) {
     return;
   }
 
   startGame();
   updateBalance();
   checkPlayerWin();
-
   render();
 }
 
@@ -71,11 +74,9 @@ function handleHit() {
   }
 
   player.hand.push(deck.pop());
-  const playerHandValue = calculateHandValue(player.hand);
-
   checkPlayerWin();
 
-  if (playerHandValue > 22) {
+  if (player.handValue >= 22) {
     message = "You Lose!";
     winner = computer;
   }
@@ -88,28 +89,24 @@ function handleStay() {
     return;
   }
 
-  const computerHandValue = calculateHandValue(computer.hand);
-
-  while (computerHandValue < 17) {
+  while (computer.handValue <= 17) {
     computer.hand.push(deck.pop());
+    checkComputerWin();
   }
 
-  if (computerHandValue > 22) {
+  if (computer.handValue >= 22 || computer.handValue < player.handValue) {
     message = "You Win!";
     winner = player;
+    player.balance += player.betAmount * 2;
   }
+  render();
 }
 
 function handleDeal() {
-  // deck = createDeck()
-  // hasGameStarted = false;
-  // player.hand = [];
-  // computer.hand = [];
-  // message = "";
-
   const balance = player.balance;
   init();
   player.balance = balance;
+  renderBalance();
 }
 
 // --------- Functions ---------
@@ -118,17 +115,24 @@ function init() {
 
   player = {
     hand: [],
+    get handValue() {
+      return this.hand.reduce((total, card) => total + card.value, 0);
+    },
     balance: 1000,
     betAmount: 0,
   };
 
   computer = {
     hand: [],
+    get handValue() {
+      return this.hand.reduce((total, card) => total + card.value, 0);
+    },
   };
 
   hasGameStarted = false;
   winner = null;
   message = "";
+  sufficientFunds = true;
 
   render();
 }
@@ -183,16 +187,14 @@ function renderHands() {
     return;
   }
 
-  const playerHandValue = calculateHandValue(player.hand);
-  playerHandDisplay.textContent = `Player Hand: ${playerHandValue}`;
+  playerHandDisplay.textContent = `Player Hand: ${player.handValue}`;
   playerHandElement.innerHTML = "";
   player.hand.forEach((card) => {
     const cardImage = createCardImage(card);
     playerHandElement.appendChild(cardImage);
   });
 
-  const computerHandValue = calculateHandValue(computer.hand);
-  computerHandDisplay.textContent = `Computer Hand: ${computerHandValue}`;
+  computerHandDisplay.textContent = `Computer Hand: ${computer.handValue}`;
   computerHandElement.innerHTML = "";
   computer.hand.forEach((card) => {
     const cardImage = createCardImage(card);
@@ -244,9 +246,7 @@ function startGame() {
 }
 
 function checkPlayerWin() {
-  const playerHandValue = calculateHandValue(player.hand);
-
-  if (playerHandValue === 21) {
+  if (player.handValue === 21) {
     if (player.hand.length === 2) {
       message = "You got BlackJack!";
       player.balance += player.betAmount * 1.5;
@@ -259,25 +259,25 @@ function checkPlayerWin() {
 }
 
 function checkComputerWin() {
-  const computerHandValue = calculateHandValue(computer.hand);
-  const playerHandValue = calculateHandValue(player.hand);
-
-  if (computerHandValue > playerHandValue && computerHandValue < 22) {
+  if (computer.handValue > player.handValue && computer.handValue < 22) {
     message = "You lose!";
-  } else if (computerHandValue === playerHandValue) {
+    winner = computer;
+  } else if (computer.handValue === player.handValue) {
     message = "It's a tie!";
     player.balance += player.betAmount;
     return;
   }
-  winner = computer;
-}
-
-function calculateHandValue(hand) {
-  return hand.reduce((total, card) => total + card.value, 0);
 }
 
 function renderMessage() {
   messageElement.textContent = message;
+}
+
+function checkBalanceZero() {
+  if (player.balance === 0) {
+    message = "You have 0 funds, click 'New Game' to start again";
+    sufficientFunds = false;
+  }
 }
 
 // // DOM elements
