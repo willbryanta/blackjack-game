@@ -268,11 +268,8 @@ function checkComputerWin() {
       message = "Computer got Blackjack!";
       winner = computer;
     }
-    
-    if (
-      computer.handValue === player.handValue &&
-      computer.hand.length > 2
-    ) {
+
+    if (computer.handValue === player.handValue && computer.hand.length > 2) {
       message = "It's a tie!";
       player.balance += player.betAmount;
     }
@@ -284,6 +281,7 @@ function checkComputerWin() {
   ) {
     message = "You lose!";
     winner = computer;
+  }
 }
 
 function renderMessage() {
