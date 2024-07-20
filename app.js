@@ -268,14 +268,8 @@ function checkComputerWin() {
       message = "Computer got Blackjack!";
       winner = computer;
     }
+    
     if (
-      computer.handValue > player.handValue &&
-      computer.handValue < 22 &&
-      computer.hand.length > 2
-    ) {
-      message = "You lose!";
-      winner = computer;
-    } else if (
       computer.handValue === player.handValue &&
       computer.hand.length > 2
     ) {
@@ -283,6 +277,13 @@ function checkComputerWin() {
       player.balance += player.betAmount;
     }
   }
+  if (
+    computer.handValue > player.handValue &&
+    computer.handValue < 22 &&
+    computer.hand.length > 2
+  ) {
+    message = "You lose!";
+    winner = computer;
 }
 
 function renderMessage() {
