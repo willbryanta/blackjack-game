@@ -257,6 +257,9 @@ function checkPlayerWin() {
     }
     winner = player;
   }
+  if (player.handValue > 21 && player.hand.length === 2) {
+    message = "You Lose!";
+  }
 }
 
 function checkComputerWin() {
