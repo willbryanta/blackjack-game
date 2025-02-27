@@ -165,6 +165,9 @@ img {
     padding: 8px 12px;
     font-size: 14px;
   }
+  .instructions {
+    display: none;
+  }
 }
 
 /* ----------------Code Graveyard--------------- */
