@@ -129,6 +129,44 @@ img {
   }
 }
 
+/* iPhone Media Queries */
+@media screen and (max-width: 430px) {
+  body {
+    flex-direction: column;
+    padding: 10px;
+    text-align: center;
+  }
+
+  h1,
+  h2,
+  h3,
+  #message,
+  #player-hand-display,
+  #computer-hand-display {
+    font-size: 2rem;
+  }
+
+  .instructions-header {
+    font-size: 24px;
+  }
+
+  .instructions-text {
+    font-size: 14px;
+  }
+
+  img {
+    height: 10rem;
+  }
+
+  #new-game-button,
+  #deal-hand-button,
+  #hit-button,
+  #stay-button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
 /* ----------------Code Graveyard--------------- */
 /* .card {
     background-color: rgb(12, 145, 228);
